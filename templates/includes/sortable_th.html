@@ -1,0 +1,9 @@
+<th scope="col" aria-sort="{{ aria_sort }}">
+  <a class="sort-link{% if active %} is-active{% endif %}{% if descending %} is-descending{% endif %}" href="{{ url }}">
+    <span>{{ label }}</span>
+    <svg class="sort-icon" viewBox="0 0 12 14" aria-hidden="true" focusable="false">
+      <path class="sort-icon-up" d="M3 5 6 2l3 3"/>
+      <path class="sort-icon-down" d="m3 9 3 3 3-3"/>
+    </svg>
+  </a>
+</th>

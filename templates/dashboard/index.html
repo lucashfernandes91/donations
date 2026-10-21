@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load l10n static %}
+
+{% block title %}Início | Gestão de Doações{% endblock %}
+{% block body_class %}dashboard-page{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=20261019-2">{% endblock %}
+{% block extra_js %}<script src="{% static 'js/dashboard.js' %}?v=20261020-1" defer></script>{% endblock %}
+
+{% block content %}
+  <section class="page-intro">
+    <div><p class="eyebrow">Visão geral</p><h1>Início</h1></div>
+    {% if perms.donations.add_donation %}<a class="button-link button-primary" href="{% url 'donations:create' %}">Nova doação</a>{% endif %}
+  </section>
+  <section class="summary-grid dashboard-metrics" aria-label="Indicadores de arrecadação">
+    <article class="metric-card"><span>Total do mês</span><strong>R$ {{ summary.month_total|floatformat:'2g' }}</strong><small>{{ month_start|date:'d/m' }} a {{ today|date:'d/m/Y' }}</small></article>
+    <article class="metric-card"><span>Doações no mês</span><strong>{{ summary.month_count }}</strong><small>Lançamentos no período</small></article>
+    <article class="metric-card"><span>Doações nos últimos 12 meses</span><strong>{{ monthly_summary.count }}</strong><small>Registros no período</small></article>
+    <article class="metric-card"><span>Arrecadação nos últimos 12 meses</span><strong>R$ {{ monthly_summary.total|floatformat:'2g' }}</strong><small>Total arrecadado no período</small></article>
+  </section>
+  <section class="report-section mixed-chart-card" aria-labelledby="monthly-title">
+    <div class="section-heading">
+      <div><h2 id="monthly-title">Arrecadação e quantidade mensal</h2><p class="dashboard-caption">Últimos 12 meses · incluindo o mês atual</p></div>
+      <div class="page-actions monthly-chart-actions">
+        <a class="button-link" href="{% url 'donations:list' %}?start_date={{ month_start|date:'Y-m-d' }}&amp;end_date={{ today|date:'Y-m-d' }}">Consultar este mês</a>
+        <button class="icon-button chart-toggle-button" type="button" data-monthly-chart-toggle aria-controls="monthly-chart-panel" aria-expanded="true" aria-label="Minimizar arrecadação e quantidade mensal">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="monthly-chart-panel" id="monthly-chart-panel" data-monthly-chart-panel>
+      <div class="mixed-chart" data-mixed-chart aria-label="Gráfico de quantidade e valor total das doações por mês"></div>
+      <div class="mixed-chart-legend" aria-label="Legenda do gráfico"><span><i class="legend-bar" aria-hidden="true"></i>Valor total arrecadado</span><span><i class="legend-line" aria-hidden="true"></i>Quantidade de doações</span></div>
+      {{ monthly_chart|json_script:"monthly-chart-data" }}
+      <ul class="sr-only" aria-label="Dados mensais do gráfico">
+        {% for item in monthly_chart %}<li>{{ item.month|date:'F/Y' }}: {{ item.count }} doações, total de R$ {{ item.total|floatformat:'2g' }}.</li>{% endfor %}
+      </ul>
+    </div>
+  </section>
+  <section class="report-section" aria-labelledby="latest-title">
+    <div class="section-heading"><div><h2 id="latest-title">Últimas doações registradas</h2><p class="dashboard-caption">Os 15 lançamentos mais recentes</p></div><a class="button-link" href="{% url 'donations:list' %}">Consultar todas</a></div>
+    {% if latest_donations %}
+      {% include 'donations/_table.html' with donations=latest_donations table_label='Últimas doações' modal_links=True hide_status=True hide_total_amount=True hide_created_at=True show_amount_breakdown=True table_class='donation-breakdown-table' receipt_menu=True %}
+      {% include 'includes/pagination.html' %}
+      {% for donation in latest_donations %}
+        <dialog class="donation-modal" id="donation-modal-{{ donation.pk }}" aria-labelledby="donation-modal-title-{{ donation.pk }}">
+          <div class="donation-modal-header">
+            <div><p class="eyebrow">Detalhes da doação</p><h2 id="donation-modal-title-{{ donation.pk }}">{{ donation.receipt_number }}</h2></div>
+            <button type="button" class="icon-button" data-donation-modal-close aria-label="Fechar detalhes da doação">×</button>
+          </div>
+          <div class="donation-modal-content">
+            {% include 'donations/_detail_fields.html' with donation=donation hide_status=True hide_metadata=True %}
+          </div>
+          {% include 'donations/_detail_actions.html' with donation=donation modal=True %}
+        </dialog>
+      {% endfor %}
+    {% else %}<p class="empty-state">Nenhuma doação registrada ainda.</p>{% endif %}
+  </section>
+  {% if not latest_donations and perms.donors.add_donor %}
+  <section class="empty-dashboard" aria-labelledby="getting-started-title">
+    <div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></div>
+    <div><p class="eyebrow">Primeiros passos</p><h2 id="getting-started-title">Comece pelo cadastro</h2><p>Registre um doador ou lance uma doação para iniciar o histórico financeiro.</p><div class="inline-actions"><a class="button-link button-secondary" href="{% url 'donors:create' %}">Cadastrar doador</a><a class="text-link" href="{% url 'donations:list' %}">Ver doações</a></div></div>
+  </section>
+  {% endif %}
+{% endblock %}

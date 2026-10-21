@@ -1,0 +1,15 @@
+<dialog class="delete-dialog" id="{{ modal_prefix }}{{ person.pk }}" data-delete-dialog aria-labelledby="{{ modal_prefix }}{{ person.pk }}-title" aria-describedby="{{ modal_prefix }}{{ person.pk }}-description">
+  <div class="delete-dialog-content">
+    <div>
+      <p class="eyebrow">Confirmar exclusão</p>
+      <h2 id="{{ modal_prefix }}{{ person.pk }}-title">Excluir {{ person_name|lower }}</h2>
+    </div>
+    <p id="{{ modal_prefix }}{{ person.pk }}-description">Você está prestes a excluir <strong>{{ person.name }}</strong>.</p>
+    <p class="modal-warning">Esta ação é permanente. O cadastro não poderá ser excluído se possuir doações vinculadas.</p>
+    <form method="post" action="{{ action_url }}" class="delete-dialog-actions">
+      {% csrf_token %}
+      <button class="button-link" type="button" data-delete-dialog-close>Cancelar</button>
+      <button class="button-danger" type="submit">Confirmar exclusão</button>
+    </form>
+  </div>
+</dialog>

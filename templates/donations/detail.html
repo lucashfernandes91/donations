@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ detail_title }} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <h1>{{ detail_title }}</h1>
+    {% include 'donations/_detail_actions.html' with hide_audit_action=True %}
+  </div>
+  {% include 'donations/_detail_fields.html' with hide_status=True hide_metadata=True show_receipt_actions=True %}
+  {% if perms.audit.view_auditentry %}
+    <section class="report-section" aria-labelledby="audit-history-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Rastreabilidade</p>
+          <h2 id="audit-history-title">Histórico de alterações</h2>
+        </div>
+      </div>
+      {% include 'audit/_entry_list.html' with entries=audit_entries empty_message='Nenhum histórico de alteração encontrado para esta doação.' %}
+    </section>
+  {% endif %}
+{% endblock %}

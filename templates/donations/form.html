@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Editar doação{% else %}Nova doação{% endif %} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="form-card donation-form-card">
+    <h1>{% if form.instance.pk %}Editar doação{% else %}Nova doação{% endif %}</h1>
+    <form method="post" data-donation-form novalidate>
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="donor-picker" data-donor-picker data-allow-new="{{ form.allow_new_donor|yesno:'true,false' }}" data-search-url="{% url 'donations:donor-search' %}">
+        <label for="{{ form.new_donor_name.id_for_label }}">{{ form.new_donor_name.label }}</label>
+        {{ form.new_donor_name }}
+        {{ form.donor }}
+        <p class="field-hint" data-donor-picker-status>
+          {% if form.allow_new_donor %}Pesquise um cadastro existente ou informe um novo nome para incluí-lo.{% else %}Selecione um doador já cadastrado.{% endif %}
+        </p>
+        {{ form.new_donor_name.errors }}
+        <div class="donor-suggestions" data-donor-suggestions hidden role="listbox" aria-label="Doador(es) disponível(is)"></div>
+      </div>
+
+      <div class="donor-picker" data-donor-picker data-person-label="responsável" data-allow-new="{{ form.allow_new_donor|yesno:'true,false' }}" data-search-url="{% url 'donors:responsible-search' %}">
+        <label for="{{ form.new_responsible_name.id_for_label }}">{{ form.new_responsible_name.label }}</label>
+        {{ form.new_responsible_name }}
+        {{ form.responsible }}
+        <p class="field-hint" data-donor-picker-status>
+          {% if form.allow_new_donor %}Pesquise um cadastro existente ou informe um novo nome para incluí-lo.{% else %}Selecione um responsável já cadastrado.{% endif %}
+        </p>
+        {{ form.new_responsible_name.errors }}
+        <div class="donor-suggestions" data-donor-suggestions hidden role="listbox" aria-label="Responsáveis disponíveis"></div>
+      </div>
+
+      <div class="form-field">
+        <label for="{{ form.donation_date.id_for_label }}">{{ form.donation_date.label }}</label>
+        {{ form.donation_date }}
+        {{ form.donation_date.errors }}
+      </div>
+
+      <div class="amount-grid">
+        <div class="form-field">
+          <label for="{{ form.donation_amount.id_for_label }}">{{ form.donation_amount.label }}</label>
+          {{ form.donation_amount }}
+          {{ form.donation_amount.errors }}
+        </div>
+        <div class="form-field">
+          <label for="{{ form.contribution_amount.id_for_label }}">{{ form.contribution_amount.label }}</label>
+          {{ form.contribution_amount }}
+          {{ form.contribution_amount.errors }}
+        </div>
+        <div class="total-preview" aria-live="polite">
+          <span>Total</span>
+          <strong data-donation-total>R$ 0,00</strong>
+        </div>
+      </div>
+
+      {% for field in form.visible_fields %}
+        {% if field.name != 'new_donor_name' and field.name != 'new_responsible_name' and field.name != 'donation_date' and field.name != 'donation_amount' and field.name != 'contribution_amount' %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {{ field.errors }}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <button type="submit">Salvar</button>
+    </form>
+  </section>
+{% endblock %}

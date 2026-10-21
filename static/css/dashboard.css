@@ -1,0 +1,59 @@
+.dashboard-metrics { grid-template-columns:minmax(0,1fr); }
+.dashboard-caption { color: var(--gray-600); font-size: .88rem; margin: .35rem 0 0; }
+.mixed-chart-card { overflow:hidden; }
+.monthly-chart-actions { align-items:center; margin:0; }
+.monthly-chart-panel[hidden] { display:none; }
+.mixed-chart { min-height:254px; overflow-x:auto; width:100%; }
+.mixed-chart svg { display:block; height:254px; min-width:42.5rem; width:100%; }
+.mixed-chart-grid { stroke:var(--gray-200); stroke-width:1; }
+.mixed-chart-axis-label { fill:var(--gray-500); font-size:10px; }
+.mixed-chart-month-label { fill:var(--gray-700); font-size:9.5pt; font-weight:600; }
+.mixed-chart-bar { fill:#15803d; }
+.mixed-chart-bar-label { fill:#166534; font-size:9.5pt; font-weight:700; paint-order:stroke; stroke:#fff; stroke-linejoin:round; stroke-width:3px; }
+.mixed-chart-line-outline { fill:none; stroke:#fff; stroke-linecap:round; stroke-linejoin:round; stroke-width:6px; }
+.mixed-chart-line { fill:none; stroke:#1d4ed8; stroke-linecap:round; stroke-linejoin:round; stroke-width:2.5; }
+.mixed-chart-point { fill:#1d4ed8; stroke:#fff; stroke-width:2px; }
+.mixed-chart-point-label { fill:#1d4ed8; font-size:10px; font-weight:700; paint-order:stroke; stroke:#fff; stroke-linejoin:round; stroke-width:3px; }
+.mixed-chart-legend { align-items:center; display:flex; flex-wrap:wrap; font-size:.8125rem; gap:.75rem 1rem; justify-content:center; margin-top:.5rem; }
+.mixed-chart-legend span { align-items:center; display:inline-flex; gap:.4rem; }
+.mixed-chart-legend i { display:inline-block; }
+.legend-bar { background:#15803d; border-radius:.2rem; height:.7rem; width:.7rem; }
+.legend-line { background:#1d4ed8; border-radius:999px; height:.16rem; position:relative; width:1rem; }
+.legend-line::after { background:#1d4ed8; border:2px solid #fff; border-radius:50%; content:""; height:.36rem; left:.28rem; position:absolute; top:50%; transform:translateY(-50%); width:.36rem; }
+.sr-only { height:1px; margin:-1px; overflow:hidden; padding:0; position:absolute; white-space:nowrap; width:1px; clip:rect(0,0,0,0); }
+.donation-modal { background:#fff; border:1px solid var(--gray-200); border-radius:.85rem; box-shadow:0 1.5rem 3rem rgba(16,24,40,.24); color:var(--gray-800); max-height:calc(100dvh - 2rem); max-width:calc(100% - 2rem); overflow:hidden; padding:0; width:min(100% - 2rem,46rem); }
+.donation-modal::backdrop { background:rgba(16,24,40,.56); }
+.donation-modal-header { align-items:flex-start; border-bottom:1px solid var(--gray-200); display:flex; gap:1rem; justify-content:space-between; padding:1rem; }
+.donation-modal-header .eyebrow { margin:0 0 .25rem; }
+.donation-modal-header h2 { color:var(--gray-900); font-size:1.15rem; margin:0; overflow-wrap:anywhere; }
+.donation-modal-header .icon-button { flex:0 0 auto; font-size:1.5rem; line-height:1; }
+.donation-modal-content { max-height:min(27rem, calc(100dvh - 18rem)); overflow-y:auto; padding:1rem; }
+.donation-modal-actions { background:var(--gray-50); border-top:1px solid var(--gray-200); display:grid; gap:.625rem; grid-template-columns:repeat(3,minmax(0,1fr)); padding:1rem; }
+.donation-modal-action-column { align-content:start; display:grid; gap:.625rem; }
+.donation-modal-action-column[data-modal-action-column="donation"] { grid-column:1; }
+.donation-modal-action-column[data-modal-action-column="contribution"] { grid-column:2; }
+.donation-modal-action-column[data-modal-action-column="management"] { grid-column:3; }
+.donation-modal-actions .button-link { justify-content:center; min-height:2.75rem; }
+.donation-modal .details { margin:0; }
+body.has-open-modal { overflow:hidden; }
+.donation-table tr[data-donation-modal-open] { cursor:pointer; }
+.donation-table tr[data-donation-modal-open]:focus-visible { outline:3px solid rgba(18,130,125,.32); outline-offset:-3px; }
+@media (max-width: 700px) {
+  .donation-modal-actions { grid-template-columns:1fr; }
+  .donation-modal-action-column[data-modal-action-column] { grid-column:auto; }
+}
+@media (min-width: 960px) {
+  .dashboard-page .topbar { min-height:4rem; padding:.55rem 2rem; }
+  .dashboard-page .page-content { padding:1.25rem 2rem 2rem; }
+  .dashboard-page .page-intro { gap:.75rem; margin-bottom:1rem; }
+  .dashboard-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .dashboard-page .summary-grid { gap:.75rem; margin-bottom:1rem; }
+  .dashboard-page .metric-card { min-height:6.25rem; padding:.85rem 1rem; }
+  .dashboard-page .metric-card::before { left:1rem; right:1rem; }
+  .dashboard-page .metric-card span { margin-bottom:.35rem; }
+  .dashboard-page .metric-card small { margin-top:.35rem; }
+  .dashboard-page .report-section { margin-bottom:1rem; padding:1rem; }
+  .dashboard-page .section-heading { margin-bottom:.75rem; padding-bottom:.65rem; }
+  .dashboard-page .mixed-chart,.dashboard-page .mixed-chart svg { height:15rem; min-height:15rem; }
+  .donation-modal-header,.donation-modal-content { padding:1.25rem; }
+}

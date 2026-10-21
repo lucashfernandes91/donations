@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load table_sort %}
+
+{% block title %}{{ responsible.name }} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="page-intro">
+    <div><p class="eyebrow">Responsável</p><h1>{{ responsible.name }}</h1><p>Dados cadastrais e doações vinculadas.</p></div>
+    <div class="page-actions">{% if perms.donors.change_donor %}<a class="button-link" href="{% url 'donors:responsible-update' responsible.pk %}">Editar responsável</a>{% endif %}{% if perms.donors.delete_donor %}<button class="button-link button-danger" type="button" data-delete-dialog-open="responsible-delete-dialog-{{ responsible.pk }}">Excluir responsável</button>{% endif %}<a class="button-link" href="{% url 'donors:responsible-list' %}">Voltar</a>{% if perms.audit.view_auditentry %}<a class="button-link" href="{% url 'audit:list' %}?entity=donors.donor&amp;object_id={{ responsible.pk }}">Histórico de alterações</a>{% endif %}</div>
+  </section>
+  <dl class="details">
+    <dt>CPF/CNPJ</dt><dd>{{ responsible.cpf|format_document|default:'Não informado' }}</dd>
+    <dt>Telefone</dt><dd>{{ responsible.phone|format_phone|default:'Não informado' }}</dd>
+    <dt>E-mail</dt><dd>{{ responsible.email|default:'Não informado' }}</dd>
+    <dt>Status</dt><dd><span class="status-badge {% if responsible.is_active %}is-active{% else %}is-inactive{% endif %}">{% if responsible.is_active %}Ativo{% else %}Inativo{% endif %}</span></dd>
+    <dt>Observação</dt><dd>{{ responsible.notes|default:'—' }}</dd>
+  </dl>
+  <section class="report-section" aria-labelledby="responsible-history-title">
+    <div class="section-heading"><div><p class="eyebrow">Doações</p><h2 id="responsible-history-title">Doações vinculadas</h2></div><strong class="section-total">R$ {{ total_responsible|floatformat:'2g' }}</strong></div>
+    {% if donations %}
+      {% include 'donations/_table.html' with donations=donations table_label='Doações vinculadas' hide_status=True hide_total_amount=True hide_created_at=True show_amount_breakdown=True hide_actions=True plain_headers=True table_class='donation-breakdown-table' %}
+    {% else %}
+      <p class="empty-state">Este responsável ainda não possui doações vinculadas.</p>
+    {% endif %}
+  </section>
+  {% if perms.donors.delete_donor %}{% url 'donors:responsible-delete' responsible.pk as responsible_delete_url %}{% include 'donors/_delete_dialog.html' with person=responsible person_name='Responsável' modal_prefix='responsible-delete-dialog-' action_url=responsible_delete_url %}{% endif %}
+{% endblock %}

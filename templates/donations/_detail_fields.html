@@ -1,0 +1,45 @@
+<dl class="details">
+  {% if not hide_status %}
+  <dt>Status</dt><dd><span class="status-badge {% if donation.status == 'active' %}is-active{% else %}is-cancelled{% endif %}">{{ donation.get_status_display }}</span></dd>
+  {% endif %}
+  {% if donation.status == 'cancelled' %}
+    <dt>Motivo do cancelamento</dt><dd>{{ donation.cancellation_reason }}</dd>
+    <dt>Cancelada por</dt><dd>{{ donation.cancelled_by }} em {{ donation.cancelled_at|date:'d/m/Y H:i' }}</dd>
+  {% endif %}
+  <dt>Doador</dt><dd><a href="{% url 'donors:detail' donation.donor.pk %}">{{ donation.donor.name }}</a></dd>
+  {% if donation.responsible %}
+  <dt>Responsável</dt><dd><a href="{% url 'donors:responsible-detail' donation.responsible.pk %}">{{ donation.responsible.name }}</a></dd>
+  {% endif %}
+  <dt>Data</dt><dd>{{ donation.donation_date|date:'d/m/Y' }}</dd>
+  {% if donation.donation_amount %}
+  <dt>Valor da doação</dt><dd{% if show_receipt_actions and donation.status == 'active' %} class="detail-amount-row"{% endif %}>
+    <span class="detail-value-action">
+      <span>R$ {{ donation.donation_amount|floatformat:2 }}</span>
+      {% if show_receipt_actions and donation.status == 'active' %}
+      <a class="detail-print-action" href="{% url 'donations:receipt' donation.pk 'donation' %}" target="_blank" rel="noopener" aria-label="Imprimir recibo da doação" title="Imprimir recibo da doação">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/><path d="M18 12h.01"/></svg>
+      </a>
+      {% endif %}
+    </span>
+  </dd>
+  {% endif %}
+  {% if donation.contribution_amount %}
+  <dt>Valor da contribuição</dt><dd{% if show_receipt_actions and donation.status == 'active' %} class="detail-amount-row"{% endif %}>
+    <span class="detail-value-action">
+      <span>R$ {{ donation.contribution_amount|floatformat:2 }}</span>
+      {% if show_receipt_actions and donation.status == 'active' %}
+      <a class="detail-print-action" href="{% url 'donations:receipt' donation.pk 'contribution' %}" target="_blank" rel="noopener" aria-label="Imprimir recibo da contribuição" title="Imprimir recibo da contribuição">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 17H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/><path d="M18 12h.01"/></svg>
+      </a>
+      {% endif %}
+    </span>
+  </dd>
+  {% endif %}
+  <dt>Forma de recebimento</dt><dd>{{ donation.get_payment_method_display }}</dd>
+  <dt>Observação</dt><dd>{{ donation.notes|default:'—' }}</dd>
+  {% if not hide_metadata %}
+  <dt>Cadastrada por</dt><dd>{{ donation.created_by }}</dd>
+  <dt>Criada em</dt><dd>{{ donation.created_at|date:'d/m/Y H:i' }}</dd>
+  <dt>Atualizada em</dt><dd>{{ donation.updated_at|date:'d/m/Y H:i' }}</dd>
+  {% endif %}
+</dl>

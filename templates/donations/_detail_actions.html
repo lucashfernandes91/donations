@@ -1,0 +1,29 @@
+{% if modal %}
+<div class="donation-modal-actions" aria-label="Ações da doação">
+  {% if donation.status == 'active' and donation.donation_amount %}
+  <div class="donation-modal-action-column" data-modal-action-column="donation">
+    <a class="button-link button-secondary" href="{% url 'donations:receipt' donation.pk 'donation' %}" target="_blank" rel="noopener">Imprimir doação</a>
+    <a class="button-link button-primary" href="{% url 'donations:receipt-download' donation.pk 'donation' %}">Baixar doação</a>
+  </div>
+  {% endif %}
+  {% if donation.status == 'active' and donation.contribution_amount %}
+  <div class="donation-modal-action-column" data-modal-action-column="contribution">
+    <a class="button-link button-secondary" href="{% url 'donations:receipt' donation.pk 'contribution' %}" target="_blank" rel="noopener">Imprimir contribuição</a>
+    <a class="button-link button-primary" href="{% url 'donations:receipt-download' donation.pk 'contribution' %}">Baixar contribuição</a>
+  </div>
+  {% endif %}
+  <div class="donation-modal-action-column" data-modal-action-column="management">
+    {% if donation.status == 'active' and perms.donations.cancel_donation %}<a class="button-link button-danger" href="{% url 'donations:cancel' donation.pk %}">Cancelar doação</a>{% endif %}
+    {% if perms.audit.view_auditentry and not hide_audit_action %}<a class="button-link" href="{% url 'audit:list' %}?entity=donations.donation&amp;object_id={{ donation.pk }}">Histórico de alterações</a>{% endif %}
+    {% if donation.status == 'active' and perms.donations.change_donation %}<a class="button-link" href="{% url 'donations:update' donation.pk %}">Editar doação</a>{% endif %}
+    {% if donation.status == 'active' %}{% if perms.donations.change_donation or perms.donations.cancel_donation %}<a class="button-link button-danger" href="{% url 'donations:cancel' donation.pk %}">Excluir doação</a>{% endif %}{% endif %}
+  </div>
+</div>
+{% else %}
+<div class="page-actions" aria-label="Ações da doação">
+  {% if donation.status == 'active' and perms.donations.change_donation %}<a class="button-link" href="{% url 'donations:update' donation.pk %}">Editar doação</a>{% endif %}
+  {% if donation.status == 'active' %}{% if perms.donations.change_donation or perms.donations.cancel_donation %}<a class="button-link button-danger" href="{% url 'donations:cancel' donation.pk %}">Excluir doação</a>{% endif %}{% endif %}
+  <a class="button-link" href="{% url 'donations:list' %}">Voltar</a>
+  {% if perms.audit.view_auditentry and not hide_audit_action %}<a class="button-link" href="{% url 'audit:list' %}?entity=donations.donation&amp;object_id={{ donation.pk }}">Histórico de alterações</a>{% endif %}
+</div>
+{% endif %}

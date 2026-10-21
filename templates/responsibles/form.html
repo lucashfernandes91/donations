@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Editar responsável{% else %}Novo responsável{% endif %} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="form-card">
+    <h1>{% if form.instance.pk %}Editar responsável{% else %}Novo responsável{% endif %}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <p>
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {{ field.errors }}
+        </p>
+      {% endfor %}
+      <button type="submit">Salvar</button>
+    </form>
+  </section>
+{% endblock %}

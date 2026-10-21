@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Doações | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="page-intro">
+    <div><p class="eyebrow">Registros e relatórios</p><h1>Doações</h1></div>
+    <div class="page-actions">
+      {% if perms.donations.add_donation %}<a class="button-link button-primary" href="{% url 'donations:create' %}">Nova doação</a>{% endif %}
+      <a class="button-link" href="{% url 'dashboard:index' %}">Voltar</a>
+    </div>
+  </section>
+
+  <section class="summary-grid" aria-label="Resumo das doações ativas filtradas">
+    <article class="metric-card"><span>Total arrecadado</span><strong>R$ {{ summary.total|floatformat:'2g' }}</strong><small>{{ summary_period_label }}</small></article>
+    <article class="metric-card"><span>Quantidade</span><strong>{{ summary.quantity }}</strong><small>Lançamentos encontrados</small></article>
+    <article class="metric-card"><span>Ticket médio</span><strong>R$ {{ summary.average|floatformat:'2g' }}</strong><small>Valor médio por doação</small></article>
+    <article class="metric-card"><span>Maior doação</span><strong>R$ {{ summary.largest|floatformat:'2g' }}</strong><small>Maior valor do período</small></article>
+  </section>
+
+  <form class="filter-card" method="get" novalidate>
+    <div class="filter-card-header collapsible-heading">
+      <div><p class="eyebrow">Filtros</p><h2>Localize as doações</h2><p class="filter-card-description">Busque por texto ou período da doação.</p></div>
+      <button class="icon-button section-toggle-button chart-toggle-button" type="button" data-collapsible-toggle aria-controls="donation-filter-panel" aria-expanded="true" data-expanded-label="Minimizar filtros" data-collapsed-label="Expandir filtros" aria-label="Minimizar filtros">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+      </button>
+    </div>
+    <div id="donation-filter-panel" data-collapsible-panel>
+      <div class="filter-grid donation-filter-grid">
+        {% for field in filter_form %}
+          {% if field.name == 'q' or field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="filter-field {% if field.name == 'q' %}filter-field-wide donor-filter-picker{% endif %}"{% if field.name == 'q' %} data-donor-filter-picker data-search-url="{% url 'donations:donor-search' %}"{% endif %}>
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.name == 'q' %}
+                <p class="sr-only" data-donor-filter-status aria-live="polite"></p>
+                <div class="donor-suggestions" data-donor-filter-suggestions hidden role="listbox" aria-label="Doador(es) encontrado(s)"></div>
+              {% endif %}
+              {% for error in field.errors %}<p class="form-error">{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="filter-actions filter-actions-right"><button class="button-primary" type="submit">Aplicar filtros</button><a class="button-link button-secondary" href="{% url 'donations:list' %}">Limpar</a></div>
+    </div>
+  </form>
+
+  <section class="report-section" aria-labelledby="result-title">
+    <div class="section-heading"><div><p class="eyebrow">Resultado</p><h2 id="result-title">Doações encontradas</h2></div><div class="page-actions"><a class="button-link" href="{% url 'donations:export-xlsx' %}{% if filter_params %}?{{ filter_params }}{% endif %}">Exportar XLSX</a></div></div>
+    {% if donations %}
+    {% include 'donations/_table.html' with table_label='Doações encontradas' hide_status=True hide_total_amount=True hide_created_at=True show_amount_breakdown=True table_class='donation-breakdown-table' receipt_menu=True %}
+      {% include 'includes/pagination.html' %}
+    {% else %}<p class="empty-state">Nenhuma doação encontrada.</p>{% endif %}
+  </section>
+
+  <section class="report-section" aria-labelledby="payment-distribution-title">
+    <div class="section-heading"><div><p class="eyebrow">Composição</p><h2 id="payment-distribution-title">Distribuição por forma de recebimento</h2></div></div>
+    {% if distribution %}
+      <div class="distribution-list">
+        {% for item in distribution %}
+          <div class="distribution-row"><span>{{ item.label }}</span><span>{{ item.quantity }} doaç{{ item.quantity|pluralize:'ão,ões' }} · <strong>R$ {{ item.total|floatformat:'2g' }}</strong></span></div>
+        {% endfor %}
+      </div>
+    {% else %}<p class="empty-state">Não há doações ativas para os filtros selecionados.</p>{% endif %}
+  </section>
+{% endblock %}

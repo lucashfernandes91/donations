@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}Cancelar doação | Gestão de Doações{% endblock %}
+{% block content %}
+  <section class="form-card"><h1>Cancelar doação</h1><p>{{ object.receipt_number }} · {{ object.donor }} · R$ {{ object.amount|floatformat:2 }}</p>
+    <p>O registro será preservado no histórico, deixará de compor a arrecadação e não poderá ser editado nem ter novos comprovantes emitidos. Não há reativação pela plataforma.</p>
+    <form method="post">{% csrf_token %}{{ form.as_p }}<div class="page-actions"><button type="submit">Confirmar cancelamento</button><a class="button-link" href="{% url 'donations:detail' object.pk %}">Voltar sem cancelar</a></div></form>
+  </section>
+{% endblock %}

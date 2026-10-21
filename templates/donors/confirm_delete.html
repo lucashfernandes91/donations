@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir {{ person_name|lower }} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="form-card">
+    <h1>Excluir {{ person_name|lower }}</h1>
+    <p>Você está prestes a excluir <strong>{{ person.name }}</strong>.</p>
+    <p>Esta ação é permanente. O cadastro não poderá ser excluído se possuir doações vinculadas.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="page-actions">
+        <button class="button-danger" type="submit">Confirmar exclusão</button>
+        <a class="button-link" href="{{ detail_url }}">Voltar sem excluir</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

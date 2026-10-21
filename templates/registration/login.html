@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Entrar | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="login-shell">
+    <div class="login-form-panel">
+      <section class="auth-card" aria-label="Login">
+        <div class="auth-card-header">
+          <div class="auth-brand">
+            <img
+              class="auth-brand-logo"
+              src="{% static 'img/lar-oscar-vargas-luzia-catarina.png' %}"
+              width="724"
+              height="543"
+              alt="Lar Oscar Vargas e Luzia Catarina"
+              decoding="async"
+              fetchpriority="high"
+            >
+          </div>
+          <p>Informe suas credenciais para continuar.</p>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <div class="auth-field">
+            <label for="{{ form.username.id_for_label }}">Usuário</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+          </div>
+          <div class="auth-field">
+            <label for="{{ form.password.id_for_label }}">Senha</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+          </div>
+          {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+          {% endif %}
+          <button type="submit">
+            Entrar no sistema
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </form>
+        <p class="auth-help">Acesso exclusivo para usuários autorizados.</p>
+      </section>
+    </div>
+  </section>
+{% endblock %}

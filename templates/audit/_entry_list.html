@@ -1,0 +1,31 @@
+{% for entry in entries %}
+  <article class="audit-entry">
+    <div class="audit-entry-header">
+      <div>
+        <h3>{{ entry.get_action_display }} · {{ entry.object_label }}</h3>
+        <p>{{ entry.created_at|date:'d/m/Y H:i:s' }} · {{ entry.actor }}</p>
+      </div>
+    </div>
+    <details class="audit-entry-details">
+      <summary>Ver campos alterados</summary>
+      {% with changes=entry.changes %}
+        {% if changes %}
+          <div class="data-table-scroll" role="region" aria-label="Campos alterados" tabindex="0">
+            <table class="data-table">
+              <thead><tr><th>Campo</th><th>Antes</th><th>Depois</th></tr></thead>
+              <tbody>
+                {% for change in changes %}
+                  <tr><td>{{ change.field }}</td><td>{{ change.before|default_if_none:'—' }}</td><td>{{ change.after|default_if_none:'—' }}</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="empty-state">Nenhum campo alterado neste registro.</p>
+        {% endif %}
+      {% endwith %}
+    </details>
+  </article>
+{% empty %}
+  <p class="empty-state">{{ empty_message|default:'Nenhum registro de auditoria encontrado.' }}</p>
+{% endfor %}

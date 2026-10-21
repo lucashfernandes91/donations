@@ -1,0 +1,9 @@
+{% if is_paginated %}
+  <nav class="pagination" aria-label="Paginação">
+    <span class="pagination-summary">Página {{ page_obj.number }} de {{ paginator.num_pages }} · {{ paginator.count }} registros</span>
+    <div class="pagination-actions">
+      {% if page_obj.has_previous %}<a class="button-link" href="{% querystring page=page_obj.previous_page_number %}">Anterior</a>{% endif %}
+      {% if page_obj.has_next %}<a class="button-link" href="{% querystring page=page_obj.next_page_number %}">Próxima</a>{% endif %}
+    </div>
+  </nav>
+{% endif %}

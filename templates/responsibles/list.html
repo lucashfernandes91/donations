@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load table_sort %}
+
+{% block title %}Responsáveis | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="page-intro">
+    <div><p class="eyebrow">Cadastros</p><h1>Responsáveis</h1></div>
+    {% if perms.donors.add_donor %}<a class="button-link button-primary" href="{% url 'donors:responsible-create' %}">Novo responsável</a>{% endif %}
+  </section>
+  <section class="report-section">
+    <div class="section-heading directory-heading">
+      <div><p class="eyebrow">Cadastros</p><h2>Responsáveis encontrados</h2></div>
+      <form class="table-search-form" method="get" data-donor-filter-picker data-search-url="{% url 'donors:responsible-search' %}">
+        <label class="sr-only" for="search">Buscar por nome</label>
+        <div class="table-search-control donor-filter-picker">
+          <button type="submit" aria-label="Buscar responsáveis">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
+          </button>
+          <input id="search" name="q" value="{{ query }}" placeholder="Buscar por nome" autocomplete="off" data-donor-filter-input>
+          <p class="sr-only" data-donor-filter-status aria-live="polite"></p>
+          <div class="donor-suggestions" data-donor-filter-suggestions hidden role="listbox" aria-label="Responsáveis encontrados"></div>
+        </div>
+      </form>
+    </div>
+    {% if responsibles %}
+      <div class="data-table-scroll" role="region" aria-label="Responsáveis encontrados" tabindex="0"><table class="data-table">
+        <thead><tr>{% sortable_th 'name' 'Nome' %}{% sortable_th 'cpf' 'CPF/CNPJ' %}{% sortable_th 'phone' 'Telefone' %}</tr></thead>
+        <tbody>
+          {% for responsible in responsibles %}
+            <tr data-row-url="{% url 'donors:responsible-detail' responsible.pk %}" tabindex="0" aria-label="Ver responsável {{ responsible.name }}">
+              <td>{{ responsible.name }}</td>
+              <td>{{ responsible.cpf|format_document|default:'-' }}</td>
+              <td>{{ responsible.phone|format_phone|default:'-' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
+      {% include 'includes/pagination.html' %}
+    {% else %}
+      <p class="empty-state">Nenhum responsável encontrado.</p>
+    {% endif %}
+  </section>
+{% endblock %}

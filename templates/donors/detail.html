@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load table_sort %}
+
+{% block title %}{{ donor.name }} | Gestão de Doações{% endblock %}
+
+{% block content %}
+  <section class="page-intro">
+    <div><p class="eyebrow">Doador</p><h1>{{ donor.name }}</h1><p>Dados cadastrais e histórico de contribuições.</p></div>
+    <div class="page-actions">{% if perms.donors.change_donor %}<a class="button-link" href="{% url 'donors:update' donor.pk %}">Editar doador</a>{% endif %}{% if perms.donors.delete_donor %}<button class="button-link button-danger" type="button" data-delete-dialog-open="donor-delete-dialog-{{ donor.pk }}">Excluir doador</button>{% endif %}<a class="button-link" href="{% url 'donors:list' %}">Voltar</a>{% if perms.audit.view_auditentry %}<a class="button-link" href="{% url 'audit:list' %}?entity=donors.donor&amp;object_id={{ donor.pk }}">Histórico de alterações</a>{% endif %}</div>
+  </section>
+  <dl class="details">
+    <dt>CPF/CNPJ</dt><dd>{{ donor.cpf|format_document|default:'Não informado' }}</dd>
+    <dt>Telefone</dt><dd>{{ donor.phone|default:'Não informado' }}</dd>
+    <dt>E-mail</dt><dd>{{ donor.email|default:'Não informado' }}</dd>
+    <dt>Status</dt><dd><span class="status-badge {% if donor.is_active %}is-active{% else %}is-inactive{% endif %}">{% if donor.is_active %}Ativo{% else %}Inativo{% endif %}</span></dd>
+    <dt>Observação</dt><dd>{{ donor.notes|default:'—' }}</dd>
+  </dl>
+  <section class="report-section" aria-labelledby="donor-history-title">
+  <div class="section-heading"><div><p class="eyebrow">Contribuições</p><h2 id="donor-history-title">Histórico de doações</h2></div><strong class="section-total">R$ {{ total_donated|floatformat:'2g' }}</strong></div>
+  {% if donations %}
+    {% include 'donations/_table.html' with donations=donations table_label='Histórico de doações' hide_status=True hide_total_amount=True hide_created_at=True show_amount_breakdown=True hide_actions=True plain_headers=True table_class='donation-breakdown-table' %}
+  {% else %}
+    <p class="empty-state">Este doador ainda não possui doações registradas.</p>
+  {% endif %}
+  </section>
+  {% if perms.donors.delete_donor %}{% url 'donors:delete' donor.pk as donor_delete_url %}{% include 'donors/_delete_dialog.html' with person=donor person_name='Doador' modal_prefix='donor-delete-dialog-' action_url=donor_delete_url %}{% endif %}
+{% endblock %}
